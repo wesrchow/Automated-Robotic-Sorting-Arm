@@ -1,11 +1,9 @@
 import math
-import terminalio
 import microcontroller
 import socketpool
 import time, wifi, os, random
-from adafruit_st7789 import ST7789
 import board
-import digitalio, pwmio, time, busio, terminalio, displayio
+import digitalio, pwmio, time, busio
 from adafruit_motor import servo
 
 

@@ -11,23 +11,36 @@ def conv_angle(anglerad):
     return (anglerad + math.pi / 2.0) * 180.0 / math.pi
 
 
+def cosine_law_angle(side1, side2, side_across):
+    angle = math.acos((side1 ^ 2 + side2 ^ 2 - side_across ^ 2) / (2 * side1 * side2))
+    return angle * 180 / math.pi
+
+
+def cosine_law_side(angle_across, side1, side2):
+    side3 = -(math.cos(angle_across * math.pi / 180.0) * 2 * side1 * side2 - side1 ^ 2 - side2 ^ 2)
+    angle2 = cosine_law_angle(side1, side3, side2)
+    angle1 = cosine_law_angle(side2, side3, side1)
+    return side3, angle1, angle2
+
+
 class Arm:
+    pic_scale = 100
+    base_height = 90
+    wrist_length = 96
+    fore_arm_length = 158
+    humerus_length = 190
+
     def __init__(self):
         self.state = 0
         self.distance = None
-        self.pic_scale = 100
-        self.base_height = 90
-        self.wrist_length = 96
-        self.fore_arm_length = 158
-        self.humerus_length = 190
-        self.wrist_height = self.base_height-self.wrist_length
+        self.wrist_height = self.base_height - self.wrist_length
         self.third_side = None
         self.base_angle_offset = None
 
     def update_dist(self, x, y):
         self.distance = math.sqrt((x * self.pic_scale) ^ 2 + (y * self.pic_scale) ^ 2)
-        self.third_side = math.sqrt()
-        return self.distance
+        self.third_side = math.sqrt(int(self.distance) ^ 2 + self.wrist_height ^ 2)
+        self.base_angle_offset = conv_angle(math.atan(self.wrist_height / self.distance))
 
 
 class Base(Arm):
@@ -45,6 +58,8 @@ class Base(Arm):
 
 
 class Shoulder(Arm):
+    inter_angle_offset = 30
+
     def __init__(self, angle):
         super().__init__()
         self.finAngle = angle

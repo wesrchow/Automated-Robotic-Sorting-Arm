@@ -10,12 +10,12 @@ def conv_angle(anglerad):
 
 
 def cosine_law_angle(side1, side2, side_across):
-    angle = math.acos((side1 ^ 2 + side2 ^ 2 - side_across ^ 2) / (2 * side1 * side2))
+    angle = math.acos((side1 ** 2 + side2 ** 2 - side_across ** 2) / (2 * side1 * side2))
     return angle * 180 / math.pi
 
 
 def cosine_law_side(angle_across, side1, side2):
-    side3 = -(math.cos(angle_across * math.pi / 180.0) * 2 * side1 * side2 - side1 ^ 2 - side2 ^ 2)
+    side3 = -(math.cos(angle_across * math.pi / 180.0) * 2 * side1 * side2 - side1 ** 2 - side2 ** 2)
     angle2 = cosine_law_angle(side1, side3, side2)
     angle1 = cosine_law_angle(side2, side3, side1)
     return angle1, angle2
@@ -51,7 +51,7 @@ def update_distances(base, shoulder, elbow, wrist):
 class Arm:
     kit = ServoKit(channels=16)
     pic_scale = 100
-    picture_offset = 100
+    picture_offset = 1
     base_height = 90
     wrist_length = 96
     fore_arm_length = 158
@@ -70,8 +70,8 @@ class Arm:
         self.base_angle_offset = None
 
     def update_dist(self, x, y):
-        self.distance = math.sqrt((x * self.pic_scale) ^ 2 + ((y + self.picture_offset) * self.pic_scale) ^ 2)
-        self.third_side = math.sqrt(int(self.distance) ^ 2 + self.wrist_height ^ 2)
+        self.distance = math.sqrt((x * self.pic_scale) ** 2 + ((y + self.picture_offset) * self.pic_scale) ** 2)
+        self.third_side = math.sqrt(int(self.distance) ** 2 + self.wrist_height ** 2)
         self.base_angle_offset = conv_angle(math.atan(self.wrist_height / self.distance))
 
 
@@ -84,7 +84,7 @@ class Base(Arm):
 
     def point_arm(self, x, y):
         center_x = x - 0.5
-        center_y = 1 - y
+        center_y = y
         self.base_servo.angle = conv_angle(math.atan(center_x / (center_y+self.picture_offset/self.pic_scale)))
 
 
@@ -104,7 +104,7 @@ class Shoulder(Arm):
             angle = 90
         elif angle < 0:
             angle = 0
-        self.shoulder_servo_r.angle = angle * 115.0 / 90.0
+        self.shoulder_servo_r.angle = (90-angle) * 115.0 / 90.0
         self.shoulder_servo_l.angle = (115 - self.shoulder_servo_r.angle)*1.04348
         return
 
@@ -113,14 +113,14 @@ class Shoulder(Arm):
             angle = 90
         elif angle < 0:
             angle = 0
-        return angle * 115.0 / 90.0, 115 - angle * 115.0 / 90.0
+        return (90-angle) * 115.0 / 90.0, 115 - (90-angle) * 115.0 / 90.0
 
 
 class Elbow(Arm):
     def __init__(self, angle):
         super().__init__()
         self.finAngle = angle
-        self.elbow_servo.angle = angle
+        self.set_angle_conv(angle)
         self.length = self.fore_arm_length
         self.finAngle = None
 
@@ -129,7 +129,7 @@ class Elbow(Arm):
             angle = 0
         elif angle > 130:
             angle = 130
-        self.elbow_servo.angle = angle * 180.0 / 130.0
+        self.elbow_servo.angle = (180-angle) * 180.0 / 130.0
         return
 
 
@@ -137,7 +137,7 @@ class Wrist(Arm):
     def __init__(self, angle):
         super().__init__()
         self.finAngle = angle
-        self.wrist_servo.angle = angle
+        self.set_angle_conv(angle)
         self.length = self.wrist_length
         self.interAngle = None
         self.finAngle = None

@@ -8,8 +8,8 @@ if __name__ == "__main__":
     shoulder = Arm.Shoulder(115)
     elbow = Arm.Elbow(70)
     wrist = Arm.Wrist(45)
-    x_sent = 1
-    y_sent = 1
+    x_sent = 1.2
+    y_sent = 1.2
     x_prev = -1
     y_prev = -1
     prob_sent = 0.9
@@ -24,7 +24,7 @@ if __name__ == "__main__":
             Arm.update_distances(base, shoulder, elbow, wrist)
             base.point_arm(x_sent, y_sent)
             Arm.update_state(base, shoulder, elbow, wrist)
-            time.sleep(1)
+            time.sleep(5)
 
         if base.state == 2:
             elbow.finAngle = Arm.cosine_law_angle(elbow.fore_arm_length, elbow.humerus_length, elbow.third_side)
@@ -42,19 +42,19 @@ if __name__ == "__main__":
             shoulder.set_angle_conv(shoulder.interAngle)
             Arm.update_state(base, shoulder, elbow, wrist)
             #### write the magnet to high ####
-            time.sleep(1)
+            time.sleep(5)
 
         if base.state == 3:
-            Arm.slow_move_synchro(wrist, shoulder, wrist.finAngle, shoulder.finAngle, 5)
+            Arm.slow_move_synchro(wrist, shoulder, wrist.finAngle, shoulder.finAngle, 40)
             Arm.update_state(base, shoulder, elbow, wrist)
-            time.sleep(1)
+            time.sleep(5)
 
         if base.state == 4:
             elbow.set_angle_conv(70)
             wrist.set_angle_conv(45)
             shoulder.set_angle_conv(115)
             Arm.update_state(base, shoulder, elbow, wrist)
-            time.sleep(1)
+            time.sleep(5)
 
         if base.state == 5:
             base.base_servo = 0

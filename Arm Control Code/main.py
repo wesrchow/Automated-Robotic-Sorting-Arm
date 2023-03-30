@@ -8,11 +8,11 @@ if __name__ == "__main__":
     shoulder = Arm.Shoulder(115)
     elbow = Arm.Elbow(70)
     wrist = Arm.Wrist(45)
-    x_sent = -1
-    y_sent = -1
+    x_sent = 1
+    y_sent = 1
     x_prev = -1
     y_prev = -1
-    prob_sent = 0
+    prob_sent = 0.9
     while True:
         if x_sent != x_prev and y_sent != y_prev and prob_sent > prob_min:
             Arm.update_state(base, shoulder, elbow, wrist)
@@ -61,6 +61,7 @@ if __name__ == "__main__":
             time.sleep(3)
             #### write the magnet to low ####
             Arm.update_state(base, shoulder, elbow, wrist)
+            time.sleep(3)
 
         #x_sent = val from website
         #y_sent = val from website

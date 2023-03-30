@@ -105,7 +105,7 @@ class Shoulder(Arm):
         elif angle < 0:
             angle = 0
         self.shoulder_servo_r.angle = angle * 115.0 / 90.0
-        self.shoulder_servo_l.angle = 115 - self.shoulder_servo_r.angle
+        self.shoulder_servo_l.angle = (115 - self.shoulder_servo_r.angle)*1.04348
         return
 
     def get_angle_conv(self, angle):
@@ -157,4 +157,6 @@ def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
         wrist.set_angle_conv((wrist_fin - wrist.wrist_servo.angle) / divs + wrist.wrist_servo.angle)
         shoulder.set_angle_conv(
             shoulder.shoulder_servo_r.angle + (shoulder_fin - shoulder.shoulder_servo_r.angle) / divs)
+        #if the potentionmeter is set off:
+            #break
     return

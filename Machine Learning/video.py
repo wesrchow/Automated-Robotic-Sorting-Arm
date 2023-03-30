@@ -2,7 +2,7 @@ import torch
 import cv2
 
 # Load the pre-trained YOLOv5 model
-model = torch.hub.load('ultralytics/yolov5', 'custom', '/Users/xxni/UBC/CPEN291/Project2/yolov5/runs/train/exp/weights/best.pt')
+model = torch.hub.load('ultralytics/yolov5', 'custom', '/home/nvidia/P2_L2B_G8/Machine Learning/best.pt')
 
 # Define the index of your webcam (usually 0 or 1)
 webcam_index = 0
@@ -15,7 +15,7 @@ fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fps = int(cap.get(cv2.CAP_PROP_FPS))
-out = cv2.VideoWriter('/Users/xxni/UBC/CPEN291/Project2/output.mp4', fourcc, fps, (width, height))
+out = cv2.VideoWriter('/home/nvidia/P2_L2B_G8/Machine Learning/output.mp4', fourcc, fps, (width, height))
 
 # Loop over each frame in the video file
 while cap.isOpened():

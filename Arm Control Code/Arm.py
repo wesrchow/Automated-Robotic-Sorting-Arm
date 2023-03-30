@@ -1,10 +1,8 @@
 import math
-import microcontroller
-import socketpool
-import time, wifi, os, random
 import board
-import digitalio, pwmio, time, busio
+import digitalio, busio
 from adafruit_motor import servo
+from adafruit_servokit import ServoKit
 
 
 def conv_angle(anglerad):
@@ -20,25 +18,59 @@ def cosine_law_side(angle_across, side1, side2):
     side3 = -(math.cos(angle_across * math.pi / 180.0) * 2 * side1 * side2 - side1 ^ 2 - side2 ^ 2)
     angle2 = cosine_law_angle(side1, side3, side2)
     angle1 = cosine_law_angle(side2, side3, side1)
-    return side3, angle1, angle2
+    return angle1, angle2
+
+
+def update_state(base, shoulder, elbow, wrist):
+    if base.state < 5:
+        base.state += 1
+        shoulder.state += 1
+        elbow.state += 1
+        wrist.state += 1
+    else:
+        base.state = 0
+        shoulder.state = 0
+        elbow.state = 0
+        wrist.state = 0
+
+
+def update_distances(base, shoulder, elbow, wrist):
+    shoulder.distance = base.distance
+    shoulder.third_side = base.third_side
+    shoulder.base_angle_offset = base.base_angle_offset
+
+    elbow.distance = base.distance
+    elbow.third_side = base.third_side
+    elbow.base_angle_offset = base.base_angle_offset
+
+    wrist.distance = base.distance
+    wrist.third_side = base.third_side
+    wrist.base_angle_offset = base.base_angle_offset
 
 
 class Arm:
+    kit = ServoKit(channels=16)
     pic_scale = 100
+    picture_offset = 100
     base_height = 90
     wrist_length = 96
     fore_arm_length = 158
     humerus_length = 190
+    base_servo = kit.servo[0]
+    shoulder_servo_l = kit.servo[1]
+    shoulder_servo_r = kit.servo[2]
+    elbow_servo = kit.servo[3]
+    wrist_servo = kit.servo[4]
+    distance = None
 
     def __init__(self):
         self.state = 0
-        self.distance = None
         self.wrist_height = self.base_height - self.wrist_length
         self.third_side = None
         self.base_angle_offset = None
 
     def update_dist(self, x, y):
-        self.distance = math.sqrt((x * self.pic_scale) ^ 2 + (y * self.pic_scale) ^ 2)
+        self.distance = math.sqrt((x * self.pic_scale) ^ 2 + ((y + self.picture_offset) * self.pic_scale) ^ 2)
         self.third_side = math.sqrt(int(self.distance) ^ 2 + self.wrist_height ^ 2)
         self.base_angle_offset = conv_angle(math.atan(self.wrist_height / self.distance))
 
@@ -47,14 +79,13 @@ class Base(Arm):
     def __init__(self, angle):
         super().__init__()
         self.finAngle = angle
-        pwm_base = pwmio.PWMOut(board.GP0, duty_cycle=2 ** 15, frequency=50)
-        self.base_servo = servo.Servo(pwm_base)
+        self.base_servo.angle = angle
         self.base_servo.angle = angle
 
     def point_arm(self, x, y):
         center_x = x - 0.5
-        self.base_servo.angle = conv_angle(math.atan(center_x / y))
-        self.state += 1
+        center_y = 1 - y
+        self.base_servo.angle = conv_angle(math.atan(center_x / (center_y+self.picture_offset/self.pic_scale)))
 
 
 class Shoulder(Arm):
@@ -63,43 +94,67 @@ class Shoulder(Arm):
     def __init__(self, angle):
         super().__init__()
         self.finAngle = angle
-        pwm_shoulder = pwmio.PWMOut(board.GP0, duty_cycle=2 ** 15, frequency=50)
-        self.shoulder_servo = servo.Servo(pwm_shoulder)
-        self.shoulder_servo.angle = angle
+        self.set_angle_conv(angle)
         self.length = self.humerus_length
         self.interAngle = None
         self.finAngle = None
+
+    def set_angle_conv(self, angle):
+        if angle > 90:
+            angle = 90
+        elif angle < 0:
+            angle = 0
+        self.shoulder_servo_r.angle = angle * 115.0 / 90.0
+        self.shoulder_servo_l.angle = 115 - self.shoulder_servo_r.angle
+        return
+
+    def get_angle_conv(self, angle):
+        if angle > 90:
+            angle = 90
+        elif angle < 0:
+            angle = 0
+        return angle * 115.0 / 90.0, 115 - angle * 115.0 / 90.0
 
 
 class Elbow(Arm):
     def __init__(self, angle):
         super().__init__()
         self.finAngle = angle
-        pwm_arm_elbow = pwmio.PWMOut(board.GP0, duty_cycle=2 ** 15, frequency=50)
-        self.elbow_servo = servo.Servo(pwm_arm_elbow)
         self.elbow_servo.angle = angle
         self.length = self.fore_arm_length
         self.finAngle = None
+
+    def set_angle_conv(self, angle):
+        if angle < 0:
+            angle = 0
+        elif angle > 130:
+            angle = 130
+        self.elbow_servo.angle = angle * 180.0 / 130.0
+        return
 
 
 class Wrist(Arm):
     def __init__(self, angle):
         super().__init__()
         self.finAngle = angle
-        pwm_arm_wrist = pwmio.PWMOut(board.GP0, duty_cycle=2 ** 15, frequency=50)
-        self.wrist_servo = servo.Servo(pwm_arm_wrist)
         self.wrist_servo.angle = angle
         self.length = self.wrist_length
         self.interAngle = None
         self.finAngle = None
 
+    def set_angle_conv(self, angle):
+        if angle < 90:
+            angle = 90
+        elif angle > 180:
+            angle = 180
+        self.wrist_servo.angle = (angle - 90) * 180.0 / 125.0
+        return
+
 
 def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
+    # conv_shoulder_fin_r, conv_shoulder_fin_l = shoulder.get_angle_conv(shoulder_fin)
     for i in range(0, divs):
-        wrist.wrist_servo.angle += (wrist_fin - wrist.wrist_servo.angle) / divs
-        shoulder.shoulder_servo.angle += (shoulder_fin - shoulder.shoulder_servo.angle) / divs
-        wrist.wrist_servo.angle = max(180, wrist.wrist_servo.angle)
-        wrist.wrist_servo.angle = min(0, wrist.wrist_servo.angle)
-        shoulder.shoulder_servo.angle = max(180, shoulder.shoulder_servo.angle)
-        shoulder.shoulder_servo.angle = min(0, shoulder.shoulder_servo.angle)
+        wrist.set_angle_conv((wrist_fin - wrist.wrist_servo.angle) / divs + wrist.wrist_servo.angle)
+        shoulder.set_angle_conv(
+            shoulder.shoulder_servo_r.angle + (shoulder_fin - shoulder.shoulder_servo_r.angle) / divs)
     return

@@ -1,4 +1,5 @@
 import math
+import time
 import board
 import digitalio, busio
 from adafruit_motor import servo
@@ -32,6 +33,7 @@ def update_state(base, shoulder, elbow, wrist):
         shoulder.state = 0
         elbow.state = 0
         wrist.state = 0
+    print(base.state)
 
 
 def update_distances(base, shoulder, elbow, wrist):
@@ -51,13 +53,13 @@ def update_distances(base, shoulder, elbow, wrist):
 class Arm:
     kit = ServoKit(channels=16)
     pic_scale = 100
-    picture_offset = 1
+    picture_offset = 50
     base_height = 90
     wrist_length = 96
     fore_arm_length = 158
     humerus_length = 190
-    base_servo = kit.servo[0]
-    shoulder_servo_l = kit.servo[1]
+    base_servo = kit.servo[5]
+    shoulder_servo_l = kit.servo[0]
     shoulder_servo_r = kit.servo[2]
     elbow_servo = kit.servo[3]
     wrist_servo = kit.servo[4]
@@ -70,7 +72,7 @@ class Arm:
         self.base_angle_offset = None
 
     def update_dist(self, x, y):
-        self.distance = math.sqrt((x * self.pic_scale) ** 2 + ((y + self.picture_offset) * self.pic_scale) ** 2)
+        self.distance = math.sqrt((x * self.pic_scale) ** 2 + (y * self.pic_scale+self.picture_offset) ** 2)
         self.third_side = math.sqrt(int(self.distance) ** 2 + self.wrist_height ** 2)
         self.base_angle_offset = conv_angle(math.atan(self.wrist_height / self.distance))
 
@@ -104,8 +106,8 @@ class Shoulder(Arm):
             angle = 90
         elif angle < 0:
             angle = 0
-        self.shoulder_servo_r.angle = (90-angle) * 115.0 / 90.0
-        self.shoulder_servo_l.angle = (115 - self.shoulder_servo_r.angle)*1.04348
+        self.shoulder_servo_r.angle = (90-angle) * 115 / 90
+        self.shoulder_servo_l.angle = (115 - self.shoulder_servo_r.angle)*1.043
         return
 
     def get_angle_conv(self, angle):
@@ -113,7 +115,14 @@ class Shoulder(Arm):
             angle = 90
         elif angle < 0:
             angle = 0
-        return (90-angle) * 115.0 / 90.0, 115 - (90-angle) * 115.0 / 90.0
+        return (angle) * 115.0 / 90.0, 115 - (angle) * 115.0 / 90.0
+
+    def conv_real(self, angle):
+        if angle > 115:
+            angle = 115
+        if angle < 0:
+            angle = 0
+        return (angle )*90.0/115.0
 
 
 class Elbow(Arm):
@@ -150,13 +159,29 @@ class Wrist(Arm):
         self.wrist_servo.angle = (angle - 90) * 180.0 / 125.0
         return
 
+    def conv_real(self, angle):
+        if angle > 180:
+            angle = 180
+        if angle < 0:
+            angle = 0
+        return (angle + 90)*125.0/180.0
+
 
 def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
-    # conv_shoulder_fin_r, conv_shoulder_fin_l = shoulder.get_angle_conv(shoulder_fin)
+    wrist_ang_init = wrist.wrist_servo.angle
+    shoulder_ang_init = shoulder.shoulder_servo_r.angle
+    wrist_mod = (wrist_fin - wrist.conv_real(wrist_ang_init))/float(divs)
+
+    print(wrist_mod)
+    shoulder_mod = (shoulder_fin-shoulder.conv_real(shoulder_ang_init))/float(divs)
+    
+    print(shoulder_mod)
     for i in range(0, divs):
-        wrist.set_angle_conv((wrist_fin - wrist.wrist_servo.angle) / divs + wrist.wrist_servo.angle)
+        wrist.set_angle_conv( wrist_mod + wrist.conv_real(wrist.wrist_servo.angle))
         shoulder.set_angle_conv(
-            shoulder.shoulder_servo_r.angle + (shoulder_fin - shoulder.shoulder_servo_r.angle) / divs)
+            shoulder.conv_real(shoulder.shoulder_servo_r.angle) + shoulder_mod)
         #if the potentionmeter is set off:
             #break
+        print(shoulder.shoulder_servo_r.angle)
+        time.sleep(0.5)
     return

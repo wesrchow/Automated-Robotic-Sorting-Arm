@@ -34,7 +34,6 @@ if __name__ == "__main__":
                                                      shoulder.fore_arm_length) - shoulder.base_angle_offset
             # shoulder.interAngle, wrist.interAngle = Arm.cosine_law_side(elbow.finAngle,
             #                                                             wrist.wrist_length, shoulder.humerus_length)
-            #
             shoulder.interAngle = shoulder.finAngle + 25
             wrist.interAngle = shoulder.finAngle - 25
             elbow.set_angle_conv(elbow.finAngle)

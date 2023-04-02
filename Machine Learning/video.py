@@ -5,18 +5,15 @@ import time
 # Load the pre-trained YOLOv5 model
 model = torch.hub.load('ultralytics/yolov5', 'custom', '/home/nvidia/P2_L2B_G8/Machine Learning/best.pt')
 
-# Define the index of your webcam (usually 0 or 1)
-webcam_index = 0
-
 # Open the webcam using OpenCV
 cap = cv2.VideoCapture("/dev/video0")
 past = time.time()
 
 # Loop over each frame in the video file
-while cap.isOpened():                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+while cap.isOpened():
     # Read the next frame from the video file
     ret, frame = cap.read()
-    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
     if ret:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         # Perform object detection on the current frame using the YOLOv5 model

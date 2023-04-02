@@ -5,11 +5,15 @@ if __name__ == "__main__":
 
     prob_min = 0.50
     base = Arm.Base(0)
-    shoulder = Arm.Shoulder(50)
-    time.sleep(10)
+    shoulder = Arm.Shoulder(0)
+    time.sleep(2)
     elbow = Arm.Elbow(120)
     wrist = Arm.Wrist(95)
     prob_sent = 0
+
+    Arm.slow_move_synchro(wrist, shoulder, 115, 0, 1000)
+    print(shoulder.shoulder_servo_r.angle)
+    print(shoulder.shoulder_servo_l.angle )
 
 
 

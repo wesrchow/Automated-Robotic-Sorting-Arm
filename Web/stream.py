@@ -35,26 +35,18 @@ class Stream(threading.Thread):
         #     return
         
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         # Perform object detection on the current frame using the YOLOv5 model
         results = self.model(img)
 
         # Draw bounding boxes around the detected objects
-        results.render()
+        # results.render()
 
         # Display the results
-        cv2.imshow('Object Detection', cv2.cvtColor(results.render()[0], cv2.COLOR_RGB2BGR))
-
-
-        if (time.time() - past > 5):
-            print(results.pandas().xyxy[0])
-            past = time.time()
+        # cv2.imshow('Object Detection', cv2.cvtColor(results.render()[0]))
 
 
         # Capture one image from the stream, process it, and output it.
-        
-        # img = self.input.Capture()
-        
+                
         # if self.args.detection:
         #     detections = self.net.Detect(img, overlay="box,labels,conf")
 
@@ -62,8 +54,9 @@ class Stream(threading.Thread):
 
         #     for detection in detections:
         #         print(detection)
-            
-        self.output.Render(frame)
+        
+        print("render result")
+        self.output.Render(img)
 
         if self.frames % 25 == 0 or self.frames < 15:
             print(f"captured {self.frames} frames from {self.args.input} => {self.args.output} ({img.width} x {img.height})")

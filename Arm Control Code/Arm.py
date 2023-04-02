@@ -116,7 +116,7 @@ class Shoulder(Arm):
         return (90-angle) * 115.0 / 90.0, 115 - (90-angle) * 115.0 / 90.0
 
     def conv_real(self, angle):
-        if angle > 115
+        if angle > 115:
             angle = 115
         if angle < 0:
             angle = 0

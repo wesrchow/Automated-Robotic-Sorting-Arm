@@ -1,7 +1,7 @@
 import torch
-from flask import Flask, render_template, Response
+# from flask import Flask, render_template, Response
 import cv2
-
+import time
 # Load the pre-trained YOLOv5 model
 model = torch.hub.load('ultralytics/yolov5', 'custom', '/home/nvidia/P2_L2B_G8/Machine Learning/best.pt')
 
@@ -9,17 +9,11 @@ model = torch.hub.load('ultralytics/yolov5', 'custom', '/home/nvidia/P2_L2B_G8/M
 webcam_index = 0
 
 # Open the webcam using OpenCV
-cap = cv2.VideoCapture(webcam_index)
-
-# Define the output video codec and dimensions
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-fps = int(cap.get(cv2.CAP_PROP_FPS))
-out = cv2.VideoWriter('/home/nvidia/P2_L2B_G8/Machine Learning/output.mp4', fourcc, fps, (width, height))
+cap = cv2.VideoCapture("/dev/video0")
+past = time.time()
 
 # Loop over each frame in the video file
-while cap.isOpened():
+while cap.isOpened():                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
     # Read the next frame from the video file
     ret, frame = cap.read()
     
@@ -39,9 +33,14 @@ while cap.isOpened():
             break
     else:
         break
+
+    if (time.time() - past > 5):
+        print(results.pandas().xyxy[0])
+        past = time.time()
+
 # Release the video file and output video file
 cap.release()
-out.release()
+# out.release()
 
 # Close all windows
 cv2.destroyAllWindows()

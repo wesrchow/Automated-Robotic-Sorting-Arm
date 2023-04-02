@@ -8,10 +8,10 @@ if __name__ == "__main__":
     shoulder = Arm.Shoulder(0)
     time.sleep(2)
     elbow = Arm.Elbow(90)
-    wrist = Arm.Wrist(12)
+    wrist = Arm.Wrist(90)
     prob_sent = 0
 
-    Arm.slow_move_synchro(wrist, shoulder, 60.0, 115.0, 10)
+    Arm.slow_move_synchro(wrist, shoulder, 120.0, 90.0, 10)
     print(shoulder.shoulder_servo_r.angle)
     print(shoulder.shoulder_servo_l.angle )
 

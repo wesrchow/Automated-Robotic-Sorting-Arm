@@ -106,7 +106,7 @@ class Shoulder(Arm):
             angle = 90
         elif angle < 0:
             angle = 0
-        self.shoulder_servo_r.angle = (angle) * 115 / 90
+        self.shoulder_servo_r.angle = (90-angle) * 115 / 90
         self.shoulder_servo_l.angle = (115 - self.shoulder_servo_r.angle)*1.043
         return
 
@@ -170,13 +170,18 @@ class Wrist(Arm):
 def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
     wrist_ang_init = wrist.wrist_servo.angle
     shoulder_ang_init = shoulder.shoulder_servo_r.angle
-    print( wrist_ang_init)
+    wrist_mod = (wrist_fin - wrist.conv_real(wrist_ang_init))/float(divs)
+
+    print(wrist_mod)
+    shoulder_mod = (shoulder_fin-shoulder.conv_real(shoulder_ang_init))/float(divs)
+    
+    print(shoulder_mod)
     for i in range(0, divs):
-        wrist.set_angle_conv((wrist_fin - wrist.conv_real(wrist_ang_init)) / float(divs) + wrist.conv_real(wrist_ang_init))
+        wrist.set_angle_conv( wrist_mod + wrist.conv_real(wrist.wrist_servo.angle))
         shoulder.set_angle_conv(
-            shoulder.conv_real(shoulder_ang_init) + (shoulder_fin - shoulder.conv_real(shoulder_ang_init)) / float(divs))
+            shoulder.conv_real(shoulder.shoulder_servo_r.angle) + shoulder_mod)
         #if the potentionmeter is set off:
             #break
         print(shoulder.shoulder_servo_r.angle)
-        time.sleep(0.3)
+        time.sleep(0.5)
     return

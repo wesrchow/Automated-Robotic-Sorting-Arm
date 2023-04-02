@@ -12,7 +12,6 @@
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
 
-
 import os
 import sys
 import ssl
@@ -39,6 +38,8 @@ stream.start()
 
 # patch to serve javascript
 SimpleHTTPRequestHandler.extensions_map['.js'] = 'text/javascript'
+
+print("http server")
 
 # start webserver
 httpd = HTTPServer((args.host, args.port), SimpleHTTPRequestHandler)

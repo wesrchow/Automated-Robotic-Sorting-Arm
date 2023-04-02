@@ -25,15 +25,15 @@ class Stream(threading.Thread):
     def process(self):
         # Read the next frame from the video file
         # ret, frame = self.cap.read()
-        
+
         img = self.input.Capture()
-        
+
         if img is None:  # timeout
             return
 
         # if not ret or frame is None:
         #     return
-        
+
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         # Perform object detection on the current frame using the YOLOv5 model
         results = self.model(img)
@@ -54,12 +54,13 @@ class Stream(threading.Thread):
 
         #     for detection in detections:
         #         print(detection)
-        
-        print("render result")
+
+        print("render img")
         self.output.Render(img)
 
         if self.frames % 25 == 0 or self.frames < 15:
             print(f"captured {self.frames} frames from {self.args.input} => {self.args.output} ({img.width} x {img.height})")
+            print(results.pandas.xyxy[0])
    
         self.frames += 1
         

@@ -2,6 +2,10 @@ import torch
 # from flask import Flask, render_template, Response
 import cv2
 import time
+import sys
+sys.path.insert(0, '/home/nvidia/P2_L2B_G8/Arm Control Code/')
+from calibrate import capture
+
 # Load the pre-trained YOLOv5 model
 model = torch.hub.load('ultralytics/yolov5', 'custom', '/home/nvidia/P2_L2B_G8/Machine Learning/best.pt')
 
@@ -31,7 +35,7 @@ while cap.isOpened():
     else:
         break
 
-    if (time.time() - past > 5):
+    if (capture):
         print(results.pandas().xyxy[0])
         past = time.time()
 

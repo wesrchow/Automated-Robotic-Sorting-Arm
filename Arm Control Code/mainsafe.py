@@ -7,11 +7,11 @@ if __name__ == "__main__":
     base = Arm.Base(0)
     shoulder = Arm.Shoulder(0)
     time.sleep(2)
-    elbow = Arm.Elbow(120)
-    wrist = Arm.Wrist(95)
+    elbow = Arm.Elbow(90)
+    wrist = Arm.Wrist(12)
     prob_sent = 0
 
-    Arm.slow_move_synchro(wrist, shoulder, 115, 0, 1000)
+    Arm.slow_move_synchro(wrist, shoulder, 60.0, 115.0, 10)
     print(shoulder.shoulder_servo_r.angle)
     print(shoulder.shoulder_servo_l.angle )
 

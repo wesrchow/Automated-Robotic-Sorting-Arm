@@ -168,12 +168,15 @@ class Wrist(Arm):
 
 
 def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
-    # conv_shoulder_fin_r, conv_shoulder_fin_l = shoulder.get_angle_conv(shoulder_fin)
+    wrist_ang_init = wrist.wrist_servo.angle
+    shoulder_ang_init = shoulder.shoulder_servo_r.angle
+    print( wrist_ang_init)
     for i in range(0, divs):
-        wrist.set_angle_conv((wrist.conv_real(wrist_fin) - wrist.wrist_servo.angle) / float(divs) + wrist.wrist_servo.angle)
+        wrist.set_angle_conv((wrist_fin - wrist.conv_real(wrist_ang_init)) / float(divs) + wrist.conv_real(wrist_ang_init))
         shoulder.set_angle_conv(
-            shoulder.shoulder_servo_r.angle + (shoulder.conv_real(shoulder_fin) - shoulder.shoulder_servo_r.angle) / float(divs))
+            shoulder.conv_real(shoulder_ang_init) + (shoulder_fin - shoulder.conv_real(shoulder_ang_init)) / float(divs))
         #if the potentionmeter is set off:
             #break
-        # time.sleep(0.1)
+        print(shoulder.shoulder_servo_r.angle)
+        time.sleep(0.3)
     return

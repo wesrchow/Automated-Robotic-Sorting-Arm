@@ -44,14 +44,14 @@ if __name__ == "__main__":
             time.sleep(2)
 
         if base.state == 3:
-            Arm.slow_move_synchro(wrist, shoulder, wrist.finAngle, shoulder.finAngle, 1000)
+            Arm.slow_move_synchro(wrist, shoulder, wrist.finAngle, shoulder.finAngle, 10)
             Arm.update_state(base, shoulder, elbow, wrist)
             time.sleep(2)
 
         if base.state == 4:
             elbow.set_angle_conv(70)
-            wrist.set_angle_conv(45)
-            shoulder.set_angle_conv(115)
+            wrist.set_angle_conv(120)
+            shoulder.set_angle_conv(0)
             Arm.update_state(base, shoulder, elbow, wrist)
             time.sleep(2)
 

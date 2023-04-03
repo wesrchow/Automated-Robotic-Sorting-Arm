@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
-        "./Arm Control Code"
+        "./Arm Control Code",
+        "./Machine Learning"
     ]
 }

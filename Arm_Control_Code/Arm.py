@@ -54,7 +54,7 @@ class Arm:
     kit = ServoKit(channels=16)
     pic_scale = 0.3
     picture_offset = 80
-    base_height = 90
+    base_height = 85
     wrist_length = 96
     fore_arm_length = 158
     humerus_length = 190
@@ -81,7 +81,6 @@ class Base(Arm):
     def __init__(self, angle):
         super().__init__()
         self.finAngle = angle
-        self.base_servo.angle = angle
         self.base_servo.angle = angle
 
     def point_arm(self, x, y):
@@ -183,5 +182,5 @@ def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
         #if the potentionmeter is set off:
             #break
         print(shoulder.shoulder_servo_r.angle)
-        time.sleep(0.5)
+        time.sleep(0.3)
     return

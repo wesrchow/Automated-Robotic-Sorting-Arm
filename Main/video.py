@@ -32,13 +32,12 @@ while cap.isOpened():
             break
     else:
         break
-    
+
     with open("capture.json",'r') as f:
         capture = json.load(f)
         if (capture is True):
-            print(results.pandas().xyxy[0])
-            print("lalalala")
-            
+            with open("sample.json", "w") as outfile:
+                outfile.dumps(results.pandas().xyxy[0].sort_values("class").to_json(orient="records"))
 
     if (capture is True):
         with open("capture.json",'w') as f:

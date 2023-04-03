@@ -52,8 +52,8 @@ def update_distances(base, shoulder, elbow, wrist):
 
 class Arm:
     kit = ServoKit(channels=16)
-    pic_scale = 100
-    picture_offset = 50
+    pic_scale = 0.3
+    picture_offset = 80
     base_height = 90
     wrist_length = 96
     fore_arm_length = 158
@@ -85,9 +85,9 @@ class Base(Arm):
         self.base_servo.angle = angle
 
     def point_arm(self, x, y):
-        center_x = x - 0.5
+        center_x = x - 320
         center_y = y
-        self.base_servo.angle = conv_angle(math.atan(center_x / (center_y+self.picture_offset/self.pic_scale)))
+        self.base_servo.angle = 90 + math.atan(center_x / (center_y+self.picture_offset/self.pic_scale))*180.0/math.pi * 180.0/130.0
 
 
 class Shoulder(Arm):

@@ -182,5 +182,5 @@ def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
         #if the potentionmeter is set off:
             #break
         print(shoulder.shoulder_servo_r.angle)
-        time.sleep(0.3)
+        time.sleep(0.4)
     return

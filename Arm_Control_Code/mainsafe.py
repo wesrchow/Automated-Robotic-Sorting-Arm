@@ -41,7 +41,7 @@ if __name__ == "__main__":
             shoulder.set_angle_conv(shoulder.interAngle)
             Arm.update_state(base, shoulder, elbow, wrist)
             #### write the magnet to high ####
-            time.sleep(2)
+            time.sleep(1.5)
 
         if base.state == 3:
             Arm.slow_move_synchro(wrist, shoulder, wrist.finAngle, shoulder.finAngle, 10)

@@ -89,6 +89,9 @@ class Base(Arm):
         center_y = y
         self.base_servo.angle = conv_angle(math.atan(center_x / (center_y+self.picture_offset/self.pic_scale)))
 
+    def raw_set(self, angle):
+        self.base_servo.angle = 90
+
 
 class Shoulder(Arm):
     inter_angle_offset = 30

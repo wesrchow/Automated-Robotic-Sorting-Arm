@@ -91,6 +91,9 @@ class Base(Arm):
     def raw_set(self, angle):
         self.base_servo.angle = angle
 
+    def raw_set(self, angle):
+        self.base_servo.angle = 90
+
 
 class Shoulder(Arm):
     inter_angle_offset = 30

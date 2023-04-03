@@ -52,9 +52,9 @@ def update_distances(base, shoulder, elbow, wrist):
 
 class Arm:
     kit = ServoKit(channels=16)
-    pic_scale = 100
-    picture_offset = 50
-    base_height = 90
+    pic_scale = 0.3
+    picture_offset = 80
+    base_height = 85
     wrist_length = 96
     fore_arm_length = 158
     humerus_length = 190
@@ -82,12 +82,14 @@ class Base(Arm):
         super().__init__()
         self.finAngle = angle
         self.base_servo.angle = angle
-        self.base_servo.angle = angle
 
     def point_arm(self, x, y):
-        center_x = x - 0.5
+        center_x = x - 320
         center_y = y
-        self.base_servo.angle = conv_angle(math.atan(center_x / (center_y+self.picture_offset/self.pic_scale)))
+        self.base_servo.angle = 90 + math.atan(center_x / (center_y+self.picture_offset/self.pic_scale))*180.0/math.pi * 180.0/130.0
+        
+    def raw_set(self, angle):
+        self.base_servo.angle = angle
 
 
 class Shoulder(Arm):
@@ -115,14 +117,14 @@ class Shoulder(Arm):
             angle = 90
         elif angle < 0:
             angle = 0
-        return (angle) * 115.0 / 90.0, 115 - (angle) * 115.0 / 90.0
+        return (90 - angle) * 115.0 / 90.0, 115 - (90 - angle) * 115.0 / 90.0
 
     def conv_real(self, angle):
         if angle > 115:
             angle = 115
         if angle < 0:
             angle = 0
-        return (angle )*90.0/115.0
+        return 90 - angle*90.0/115.0
 
 
 class Elbow(Arm):
@@ -164,7 +166,7 @@ class Wrist(Arm):
             angle = 180
         if angle < 0:
             angle = 0
-        return (angle + 90)*125.0/180.0
+        return angle*125.0/180.0 + 90
 
 
 def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
@@ -177,11 +179,11 @@ def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
     
     print(shoulder_mod)
     for i in range(0, divs):
-        wrist.set_angle_conv( wrist_mod + wrist.conv_real(wrist.wrist_servo.angle))
+        wrist.set_angle_conv(wrist_mod + wrist.conv_real(wrist.wrist_servo.angle))
         shoulder.set_angle_conv(
             shoulder.conv_real(shoulder.shoulder_servo_r.angle) + shoulder_mod)
         #if the potentionmeter is set off:
             #break
         print(shoulder.shoulder_servo_r.angle)
-        time.sleep(0.5)
+        time.sleep(0.4)
     return

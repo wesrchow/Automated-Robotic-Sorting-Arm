@@ -34,8 +34,8 @@ if __name__ == "__main__":
                                                      shoulder.fore_arm_length) - shoulder.base_angle_offset
             # shoulder.interAngle, wrist.interAngle = Arm.cosine_law_side(elbow.finAngle,
             #                                                             wrist.wrist_length, shoulder.humerus_length)
-            shoulder.interAngle = shoulder.finAngle + 60
-            wrist.interAngle = shoulder.finAngle - 60
+            shoulder.interAngle = shoulder.finAngle + 50
+            wrist.interAngle = shoulder.finAngle - 50
             elbow.set_angle_conv(elbow.finAngle)
             wrist.set_angle_conv(wrist.interAngle)
             shoulder.set_angle_conv(shoulder.interAngle)
@@ -52,6 +52,7 @@ if __name__ == "__main__":
             elbow.set_angle_conv(90)
             wrist.set_angle_conv(90)
             shoulder.set_angle_conv(90)
+            base.base_servo.angle = 0
             Arm.update_state(base, shoulder, elbow, wrist)
             time.sleep(2)
 

@@ -52,7 +52,7 @@ def update_distances(base, shoulder, elbow, wrist):
 
 class Arm:
     kit = ServoKit(channels=16)
-    pic_scale = 0.5
+    pic_scale = 0.7
     picture_offset = 80
     base_height = 85
     wrist_length = 96

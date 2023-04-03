@@ -36,8 +36,8 @@ while cap.isOpened():
     with open("capture.json",'r') as f:
         capture = json.load(f)
         if (capture is True):
-            with open("sample.json", "w") as outfile:
-                outfile.dumps(results.pandas().xyxy[0].sort_values("class").to_json(orient="records"))
+            with open("detection.json", "w") as f2:
+                json.dump(results.pandas().xyxy[0].sort_values("class").to_json(orient="records"), f2)
 
     if (capture is True):
         with open("capture.json",'w') as f:

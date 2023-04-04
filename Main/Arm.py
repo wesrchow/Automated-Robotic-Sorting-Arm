@@ -38,7 +38,8 @@ def update_state(base, shoulder, elbow, wrist):
     print(base.state)
 
 
-#Sets the value for distance, the third side of the triangle used to find all angles and the angle offset that's goes with the base and the wrist angle
+#Sets the value for distance, the third side of the triangle used to find all angles and the angle offset that's goes with the base and updates 
+# the parameters in the wrist subclass so they can be used for the wrist as well. It does the same for all objects
 def update_distances(base, shoulder, elbow, wrist):
     shoulder.distance = base.distance
     shoulder.third_side = base.third_side
@@ -53,43 +54,47 @@ def update_distances(base, shoulder, elbow, wrist):
     wrist.base_angle_offset = base.base_angle_offset
 
 
-# 
+# Superclass for the entire Arm
 class Arm:
     kit = ServoKit(channels=16)
-    pic_scale_x = 0.328
+    pic_scale_x = 0.328             #Scaling for x and y coordinate to convert to mm
     pic_scale_y = 1/3
-    picture_offset = 208
-    base_height = 85
+    picture_offset = 208            #Flat offset in mm to account for distance of the bottom of the picture frame to the bottom of the arm
+    base_height = 85                #Dimensions of the arm
     wrist_length = 96
     fore_arm_length = 158
     humerus_length = 190
-    base_servo = kit.servo[5]
+    base_servo = kit.servo[5]       #Pins for the servo to set angles
     shoulder_servo_l = kit.servo[0]
     shoulder_servo_r = kit.servo[2]
     elbow_servo = kit.servo[3]
     wrist_servo = kit.servo[4]
     magnet = kit.servo[6]
-    distance = None
+    distance = None                 #Distance parameter to be set
 
     def __init__(self):
-        self.state = 0
+        self.state = 0                                              #Start state off at zero, calculate wristheight
         self.wrist_height = self.base_height - self.wrist_length
         self.third_side = None
         self.base_angle_offset = None
 
     def update_dist(self, x, y):
-        center_x = x - 320
+        center_x = x - 320                                                                      
         self.distance = math.sqrt((center_x * self.pic_scale_x) ** 2 + (y * self.pic_scale_y + self.picture_offset) ** 2)
         self.third_side = math.sqrt(int(self.distance) ** 2 + self.wrist_height ** 2)
         self.base_angle_offset = conv_angle(math.atan(self.wrist_height / self.distance))
 
-
+#Subclass for the base of the arm
 class Base(Arm):
+    #Initialize final angle and the current angle based on number used in the constructor. Note that the servo says 0-180,
+    #but in the real world it only has 0-~130 degrees of rotation. Here, the values are set raw, but in all other cases there 
+    #are conversions. For the base, all that matters is converting the angle when pointing the arm toward a component.
     def __init__(self, angle):
         super().__init__()
         self.finAngle = angle
         self.base_servo.angle = angle
 
+    #Set the angle for given coordinates x, y
     def point_arm(self, x, y):
         center_x = x - 320
         center_y = y
@@ -104,6 +109,7 @@ class Base(Arm):
         self.base_servo.angle = angle
 
 
+#Shoulder sub-class and functions for setting and converting
 class Shoulder(Arm):
     inter_angle_offset = 30
 
@@ -139,6 +145,7 @@ class Shoulder(Arm):
         return 90 - angle * 90.0 / 115.0
 
 
+#Elbow subclass, setting and converting functions specific to it
 class Elbow(Arm):
     def __init__(self, angle):
         super().__init__()
@@ -156,6 +163,7 @@ class Elbow(Arm):
         return
 
 
+#Wrist sub-class, setting and converting functions specific to it
 class Wrist(Arm):
     def __init__(self, angle):
         super().__init__()
@@ -181,6 +189,8 @@ class Wrist(Arm):
         return angle * 125.0 / 180.0 + 90
 
 
+#Function for the slow movement for the process of picking up a componenet. Give it the wrist, shoulder object and the final angles for each,
+#along with number of divisions (divs) you want to split the movement into
 def slow_move_synchro(wrist, shoulder, wrist_fin, shoulder_fin, divs):
     wrist_ang_init = wrist.wrist_servo.angle
     shoulder_ang_init = shoulder.shoulder_servo_r.angle

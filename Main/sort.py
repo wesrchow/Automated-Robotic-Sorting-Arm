@@ -15,16 +15,16 @@ class arm_controller:
         GPIO.output(self.magnet, GPIO.HIGH)
 
     def release(self):
-        GPIO.output(self.magnet, GPIO.LOW)
-        
-        # i = 0
-        # while(i < 80): 
-        #     time.sleep(0.05)
-        #     GPIO.output(self.magnet, GPIO.LOW)
-        #     time.sleep(0.05)
-        #     GPIO.output(self.magnet, GPIO.HIGH)
-        #     i = i + 1
         # GPIO.output(self.magnet, GPIO.LOW)
+        
+        i = 0
+        while(i < 100):
+            time.sleep(0.08)
+            GPIO.output(self.magnet, GPIO.LOW)
+            time.sleep(0.2)
+            GPIO.output(self.magnet, GPIO.HIGH)
+            i = i + 1
+        GPIO.output(self.magnet, GPIO.LOW)
 
 
 
@@ -129,12 +129,12 @@ class arm_controller:
             base.base_servo.angle = 45                      #For the angle that the component is to be put down at, first move it to a median angle that will cause less whiplash on parts
             time.sleep(0.5)
             base.base_servo.angle = 0                       #Set the angle to the desired sorted place of component
-            time.sleep(3)
+            time.sleep(1.5)
             
             arm_con.release()                               #release the component that is attached
 
             Arm.update_state(base, shoulder, elbow, wrist)  #Update the state back to zero for the arm
-            time.sleep(3)
+            time.sleep(1.5)
 
     #function called for sorting capacitors. Identical to the resistor verision except the final spot for placing the capacitor is different
     def sort_capacitor(x_sent, y_sent):

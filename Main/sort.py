@@ -1,4 +1,5 @@
 # Arm control algorithm to pick up and drop components stored in "detetion.json"
+# The program controls 5 servo motors and 1 electromagnet
 import Arm
 import time
 import json
@@ -48,6 +49,8 @@ class arm_controller:
         }
 
 
+    # given the corrdinate of the component, control robot arm and magnet 
+    # to pick it up then drop in specified area :)
     def sort_resistor(x_sent, y_sent):
         base = Arm.Base(90)
         shoulder = Arm.Shoulder(115)
@@ -298,7 +301,6 @@ class arm_controller:
             time.sleep(3)
 
     def sort_led(x_sent, y_sent):
-
         base = Arm.Base(90)
         shoulder = Arm.Shoulder(115)
         elbow = Arm.Elbow(70)
@@ -419,7 +421,8 @@ class arm_controller:
                 y_input = (led_red['ymin'] + led_red['ymax'])/2
                 y_input = 480 - y_input
                 self.sort_led(x_input, y_input)
-        
+    
+    
     def sort_all_components(self):
         self.sort_all_led_red(self)
         self.sort_all_resistors(self)

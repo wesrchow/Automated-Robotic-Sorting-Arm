@@ -10,7 +10,6 @@ from jetson_utils import cudaFromNumpy, saveImageRGBA
 model = torch.hub.load('ultralytics/yolov5', 'custom', 'best.pt')
 # Open the webcam using OpenCV
 cap = cv2.VideoCapture("v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! videoconvert ! video/x-raw,format=BGR ! appsink")
-past = time.time()
 
 # Loop over each frame in the video file
 while cap.isOpened():

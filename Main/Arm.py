@@ -1,3 +1,4 @@
+# Arm class for angle convertion and set angles
 import math
 import time
 import board
@@ -52,8 +53,9 @@ def update_distances(base, shoulder, elbow, wrist):
 
 class Arm:
     kit = ServoKit(channels=16)
-    pic_scale = 0.4
-    picture_offset = 80
+    pic_scale_x = 0.328
+    pic_scale_y = 1/3
+    picture_offset = 220
     base_height = 85
     wrist_length = 96
     fore_arm_length = 158
@@ -74,16 +76,9 @@ class Arm:
 
     def update_dist(self, x, y):
         center_x = x - 320
-        self.distance = math.sqrt((center_x * self.pic_scale) ** 2 + (y * self.pic_scale + self.picture_offset) ** 2)
+        self.distance = math.sqrt((center_x * self.pic_scale_x) ** 2 + (y * self.pic_scale_y + self.picture_offset) ** 2)
         self.third_side = math.sqrt(int(self.distance) ** 2 + self.wrist_height ** 2)
         self.base_angle_offset = conv_angle(math.atan(self.wrist_height / self.distance))
-
-    def magnet_set(self,state):
-
-        if state == 0:
-            magnet.set_pwm(0, 0)
-        elif state == 1:
-            magnet.set_pwm(0, 4096)
 
 
 class Base(Arm):
@@ -95,13 +90,15 @@ class Base(Arm):
     def point_arm(self, x, y):
         center_x = x - 320
         center_y = y
-        self.base_servo.angle = 90 + math.atan(
-            center_x / (center_y + self.picture_offset / self.pic_scale)) * 180.0 / math.pi * 180.0 / 130.0
-        print(self.base_servo.angle)
+        self.base_servo.angle = (90 - math.atan(
+            center_x / (center_y + self.picture_offset / self.pic_scale_y)) * 180.0 / math.pi * 180.0 / 130.0)/2
+        time.sleep(0.5)
+        self.base_servo.angle = 90 - math.atan(
+            center_x / (center_y + self.picture_offset / self.pic_scale_y)) * 180.0 / math.pi * 180.0 / 130.0
 
 
     def raw_set(self, angle):
-        self.base_servo.angle = 90
+        self.base_servo.angle = angle
 
 
 class Shoulder(Arm):
@@ -148,10 +145,10 @@ class Elbow(Arm):
         self.finAngle = None
 
     def set_angle_conv(self, angle):
-        if angle < 0:
-            angle = 0
-        elif angle > 130:
-            angle = 130
+        if angle < 50:
+            angle = 50
+        elif angle > 180:
+            angle = 180
         self.elbow_servo.angle = (180 - angle) * 180.0 / 130.0
         return
 

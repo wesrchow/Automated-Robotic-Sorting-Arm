@@ -1,13 +1,13 @@
+# code that runs and displays object detection, if recieve signals from flaskapp,
+# capture a frame, save to a image file.
 import torch
-# from flask import Flask, render_template, Response
 import cv2
 import time
 import json
 from jetson_utils import cudaFromNumpy, saveImageRGBA
 
 # Load the pre-trained YOLOv5 model
-# model = torch.hub.load('ultralytics/yolov5', 'custom', 'best.pt')
-model = torch.hub.load("ultralytics/yolov5", "custom", "best.pt")
+model = torch.hub.load('ultralytics/yolov5', 'custom', 'best.pt')
 # Open the webcam using OpenCV
 cap = cv2.VideoCapture("v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! videoconvert ! video/x-raw,format=BGR ! appsink")
 past = time.time()
@@ -23,14 +23,14 @@ while cap.isOpened():
         results = model(frame)
 
         # Draw bounding boxes around the detected objects
-        # results.render()
+        results.render()
 
         # Display the results
         cv2.imshow('Object Detection', cv2.cvtColor(results.render()[0], cv2.COLOR_RGB2BGR))
 
         # Exit the loop if the 'q' key is pressed
-        # if cv2.waitKey(1) & 0xFF == ord('q'):
-        #     break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
     # check if button is pressed on website
     with open("capture.json", 'r') as f:

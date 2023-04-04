@@ -55,7 +55,7 @@ class Arm:
     kit = ServoKit(channels=16)
     pic_scale_x = 0.328
     pic_scale_y = 1/3
-    picture_offset = 220
+    picture_offset = 215
     base_height = 85
     wrist_length = 96
     fore_arm_length = 158

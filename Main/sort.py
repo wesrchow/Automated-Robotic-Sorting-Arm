@@ -142,9 +142,9 @@ class arm_controller:
             wrist.interAngle = wrist.finAngle - 50
 
             if(x_sent - 340) > 0:
-                shoulder.finAngle = shoulder.finAngle - 5
+                shoulder.finAngle = shoulder.finAngle - 9
             else:
-                shoulder.finAngle = shoulder.finAngle - 6
+                shoulder.finAngle = shoulder.finAngle - 10
 
             elbow.set_angle_conv(elbow.finAngle)
             wrist.set_angle_conv(wrist.interAngle)
@@ -205,9 +205,9 @@ class arm_controller:
             wrist.interAngle = wrist.finAngle - 50
 
             if(x_sent - 340) > 0:
-                shoulder.finAngle = shoulder.finAngle - 5
+                shoulder.finAngle = shoulder.finAngle - 9
             else:
-                shoulder.finAngle = shoulder.finAngle - 6
+                shoulder.finAngle = shoulder.finAngle - 10
 
             elbow.set_angle_conv(elbow.finAngle)
             wrist.set_angle_conv(wrist.interAngle)
@@ -266,9 +266,9 @@ class arm_controller:
             wrist.interAngle = wrist.finAngle - 50
 
             if(x_sent - 340) > 0:
-                shoulder.finAngle = shoulder.finAngle - 5
+                shoulder.finAngle = shoulder.finAngle - 9
             else:
-                shoulder.finAngle = shoulder.finAngle - 6
+                shoulder.finAngle = shoulder.finAngle - 10
 
             elbow.set_angle_conv(elbow.finAngle)
             wrist.set_angle_conv(wrist.interAngle)
@@ -328,9 +328,9 @@ class arm_controller:
             wrist.interAngle = wrist.finAngle - 50
 
             if(x_sent - 340) > 0:
-                shoulder.finAngle = shoulder.finAngle - 5
+                shoulder.finAngle = shoulder.finAngle - 9
             else:
-                shoulder.finAngle = shoulder.finAngle - 6
+                shoulder.finAngle = shoulder.finAngle - 10
 
             elbow.set_angle_conv(elbow.finAngle)
             wrist.set_angle_conv(wrist.interAngle)

@@ -20,6 +20,7 @@ class calibrate_run:
         wrist.set_angle_conv(90)
         
         time.sleep(3)
+        # save "calibrate" to file, as a signal for other processes
         capture = "calibrate"
         with open('capture.json', 'w') as f:
             json.dump(capture, f)

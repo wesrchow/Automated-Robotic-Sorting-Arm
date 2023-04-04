@@ -31,7 +31,7 @@ while cap.isOpened():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    # check if button is pressed on website
+    # check if button is pressed on website (check content of capture.json)
     with open("capture.json", 'r') as f:
         capture = json.load(f)
         if (capture == "calibrate"):
@@ -40,11 +40,14 @@ while cap.isOpened():
             data = json.loads(data)
 
             # capture frame and save to local
+            # convert numpy array (from opencv) to cudaiamge, then save as file.jpg
             cuda_mem = cudaFromNumpy(results.render()[0])
             saveImageRGBA("detection.jpg", cuda_mem)
+            
+            # write detetion data to file
             with open("detection.json", "w") as f2:
                 json.dump(data, f2)
 
-            # reset capture variable in capture.json
+            # reset capture signal in capture.json
             with open("capture.json", "w") as f:
                 json.dump("nope", f)

@@ -1,68 +1,32 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Hello World</title>
-    <script type='text/javascript' src='https://webrtc.github.io/adapter/adapter-latest.js'></script>
-    <script type='text/javascript' src='/webrtc.js'></script>
-    <script type='text/javascript'>
-    
-      play = function() {
-        playStream(document.getElementById('play-stream').value, document.getElementById('video-player'));
-      };
-      
-      send = function() {
-        sendStream(getWebsocketURL('input'), document.getElementById('send-stream').value);
-        play(); // autoplay browser stream
-      }
-      
-      window.onload = function() {
-        var playStream = document.getElementById('play-stream');
-        var sendStream = document.getElementById('send-stream');
-        var sendButton = document.getElementById('send-button');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Automated Robotic Sorting Arm</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=JetBrains Mono">
+</head>
+<body>
+<div class="header">
+    <h1>Automated Robotic Sorting Arm</h1>
+</div>
 
-        playStream.value = getWebsocketURL('output');
+<div class="main-content">
+    <div class="media-container">
+        <!-- <video controls autoplay>
+            <source src="http://206.12.45.85:8554/jsfs.html" type="application/x-mpegURL">
+        </video> -->
+        <img id="detection-viewport" src="" alt="">
+    </div>
 
-        // populate the list of browser video devices (requires HTTPS)
-        if( checkMediaDevices() ) {
-          navigator.mediaDevices.getUserMedia({audio: false, video: true}).then((stream) => { // get permission from user
-            navigator.mediaDevices.enumerateDevices().then((devices) => {
-              stream.getTracks().forEach(track => track.stop()); // close the device opened to get permissions
-              devices.forEach((device) => {
-                if( device.kind == 'videoinput' ) {
-                  console.log(`Browser media device:  ${device.kind}  label=${device.label}  id=${device.deviceId}`);
-                  sendStream.add(new Option(device.label, device.deviceId));
-                }
-              });
-              if( sendStream.options.length == 0 ) {
-                sendStream.add(new Option('browser has no webcams available'));
-                sendButton.disabled = true;
-              }
-            });
-          }).catch(reportError);
-        }
-        else
-        {
-          sendStream.add(new Option('use HTTPS to enable browser webcam'));
-          sendButton.disabled = true;
-        }
-      }
-    </script>
-  </head>
+    <div class="controls-container">
+        <button id="calibrate-arm" type="button">Calibrate Arm</button>
+        <button id="sort-all" type="button">Sort All</button>
+        <button id="sort-all-resistors" type="button">sort-all-resistors</button>
+        <button id="sort-all-capacitors" type="button">sort-all-capacitors</button>
+        <button id="sort-all-led-red" type="button">sort-all-led-red</button>
+    </div>
+</div>
 
-  <body style="background-color:#333333; color:#FFFFFF; font-family:Arial">
-    <div>
-      <video id="video-player" autoplay controls playsinline muted>Your browser does not support video</video>
-    </div>
-    <div>
-      <label for="send-stream">Webcam:</label>
-      <select id="send-stream" name="send-stream" style="width: 245;"></select>
-      <button id="send-button" onclick="send()">Send</button>
-    </div>
-    <div>
-      <label for="play-stream">Stream:</label>
-      <input id="play-stream" name="play-stream" type="text" size="32">
-      <button id="play-button" onclick="play()">Play</button>
-    </div>
-  </body>
+<script src="script.js"></script>
+</body>
 </html>

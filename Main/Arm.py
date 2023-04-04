@@ -6,16 +6,16 @@ import digitalio, busio
 from adafruit_motor import servo
 from adafruit_servokit import ServoKit
 
-
+# convert from radian to degree
 def conv_angle(anglerad):
     return (anglerad) * 180.0 / math.pi
 
-
+# cosine law 1#
 def cosine_law_angle(side1, side2, side_across):
     angle = math.acos((side1 ** 2 + side2 ** 2 - side_across ** 2) / (2 * side1 * side2))
     return angle * 180.0 / math.pi
 
-
+# cosin law 2#
 def cosine_law_side(angle_across, side1, side2):
     side3 = -(math.cos(angle_across * math.pi / 180.0) * 2 * side1 * side2 - side1 ** 2 - side2 ** 2)
     angle2 = cosine_law_angle(side1, side3, side2)
@@ -23,6 +23,7 @@ def cosine_law_side(angle_across, side1, side2):
     return angle1, angle2
 
 
+#Update the state fro the arm
 def update_state(base, shoulder, elbow, wrist):
     if base.state < 5:
         base.state += 1
@@ -37,6 +38,7 @@ def update_state(base, shoulder, elbow, wrist):
     print(base.state)
 
 
+#Sets the value for distance, the third side of the triangle used to find all angles and the angle offset that's goes with the base and the wrist angle
 def update_distances(base, shoulder, elbow, wrist):
     shoulder.distance = base.distance
     shoulder.third_side = base.third_side
@@ -51,11 +53,12 @@ def update_distances(base, shoulder, elbow, wrist):
     wrist.base_angle_offset = base.base_angle_offset
 
 
+# 
 class Arm:
     kit = ServoKit(channels=16)
     pic_scale_x = 0.328
     pic_scale_y = 1/3
-    picture_offset = 215
+    picture_offset = 208
     base_height = 85
     wrist_length = 96
     fore_arm_length = 158

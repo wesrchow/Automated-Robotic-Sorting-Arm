@@ -17,6 +17,6 @@ class calibrate_run:
         wrist.set_angle_conv(90)
         base.raw_set(90)
         
-        capture = True
+        capture = "calibrate"
         with open('capture.json', 'w') as f:
             json.dump(capture, f)

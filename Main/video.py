@@ -3,51 +3,49 @@ import torch
 import cv2
 import time
 import json
+from jetson_utils import cudaFromNumpy, saveImageRGBA
 
 # Load the pre-trained YOLOv5 model
-model = torch.hub.load('ultralytics/yolov5', 'custom', 'best.pt')
-
+# model = torch.hub.load('ultralytics/yolov5', 'custom', 'best.pt')
+model = torch.hub.load("ultralytics/yolov5", "custom", "best.pt")
 # Open the webcam using OpenCV
 cap = cv2.VideoCapture("v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! videoconvert ! video/x-raw,format=BGR ! appsink")
 past = time.time()
 
 # Loop over each frame in the video file
 while cap.isOpened():
-    # Read the next frame from the video file
+    # Read the next frame from the video file                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
     ret, frame = cap.read()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
     if ret:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         # Perform object detection on the current frame using the YOLOv5 model
         results = model(frame)
 
         # Draw bounding boxes around the detected objects
-        results.render()
+        # results.render()
 
         # Display the results
         cv2.imshow('Object Detection', cv2.cvtColor(results.render()[0], cv2.COLOR_RGB2BGR))
 
         # Exit the loop if the 'q' key is pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    else:
-        break
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     break
 
-    with open("capture.json",'r') as f:
+    # check if button is pressed on website
+    with open("capture.json", 'r') as f:
         capture = json.load(f)
-        if (capture is True):
+        if (capture == "calibrate"):
+            # write detection to file
+            data = results.pandas().xyxy[0].to_json(orient="records")
+            data = json.loads(data)
+
+            # capture frame and save to local
+            cuda_mem = cudaFromNumpy(results.render()[0])
+            saveImageRGBA("detection.jpg", cuda_mem)
             with open("detection.json", "w") as f2:
-                json.dump(results.pandas().xyxy[0].sort_values("class").to_json(orient="records"), f2)
+                json.dump(data, f2)
 
-    if (capture is True):
-        with open("capture.json",'w') as f:
-            capture = False
-            json.dump(capture, f)
-
-
-# Release the video file and output video file
-cap.release()
-# out.release()
-
-# Close all windows
-cv2.destroyAllWindows()
+            # reset capture variable in capture.json
+            with open("capture.json", "w") as f:
+                json.dump("nope", f)

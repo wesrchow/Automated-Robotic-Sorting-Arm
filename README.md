@@ -1,4 +1,6 @@
-# P2_L2B_G8
-CPEN 291 Project 2
+# Automated-Robotic-Sorting-Arm
+_(Developed for my CPEN design studio class with a team of 4.)_
 
-Notion: https://www.notion.so/Project-2-1f5e2b852e144ee7881d3e22363362df
+An automated robotic sorting arm that was powered by Python and an NVIDIA Jetson Nano. The robotic arm used computer vision machine learning to classify and sort electronic components on a table.
+
+We leveraged the YOLOv5 machine learning model and created our own dataset using Roboflow. Using this object detection, we implemented reverse kinematics to control the robot arm. The arm was built using custom-designed 3D-printed parts, an electromagnet, servo motors and a battery power system.
